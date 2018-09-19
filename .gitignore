@@ -1,5 +1,3 @@
-reated by https://www.gitignore.io/api/macos,python,pycharm
-
 ### macOS ###
 # General
 .DS_Store
@@ -105,6 +103,8 @@ fabric.properties
 .idea/sonarlint
 
 ### Python ###
+=======
+>>>>>>> 173231586f576de30440901fe76dee7e88dd1b82
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
