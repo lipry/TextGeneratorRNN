@@ -1,5 +1,6 @@
 import numpy as np
 
+from src.FileReader import OneHotEncodingUtilities
 from src.Operations import Sigmoid
 from src.Operations import Multiply
 from src.Operations import Add
@@ -52,8 +53,9 @@ class RnnNetwork:
         cells = []
         h_prev = np.zeros(self.hidden_dim)
         for elem in x:
+            v = OneHotEncodingUtilities.one_hot_encoder(elem, self.input_dim)
             cell = RNNLayer()
-            cell.forward_pass(elem, h_prev, self.U, self.W, self.V)
+            cell.forward_pass(v, h_prev, self.U, self.W, self.V)
             h_prev = cell.h
             cells.append(cell)
         return cells

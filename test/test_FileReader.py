@@ -40,7 +40,7 @@ def test_one_hot_encoding():
     i = 7
     input_dim = 10
     one_hot = np.array([0, 0, 0, 0, 0, 0, 0, 1, 0, 0])
-    
+
     v = OneHotEncodingUtilities.one_hot_encoder(i, input_dim)
     assert np.array_equal(v, one_hot)
 

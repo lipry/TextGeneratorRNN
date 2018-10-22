@@ -41,6 +41,9 @@ class FileReader:
 class OneHotEncodingUtilities:
     @staticmethod
     def one_hot_encoder(index, input_dim):
+        if not isinstance(index, (int, np.int32, np.int64)):
+            raise TypeError
+
         v = np.zeros(input_dim)
         v[index] = 1
         return v

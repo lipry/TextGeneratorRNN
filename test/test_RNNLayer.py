@@ -44,6 +44,6 @@ def test_rnn_layer_forward_pass():
 
 
 def test_rnnnetwork_forward_propagation():
-    x = np.array([[0, 1, 0], [0, 1, 0]])
+    x = np.array([1, 2])
     cells = rnn.forward_prop(x)
     assert len(cells) == 2
