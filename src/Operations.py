@@ -1,7 +1,6 @@
 import numpy as np
 
 
-#TODO: testing
 class Sigmoid:
     """Implement the forward and backward pass for a standard logistic function"""
     def forward_pass(self, x):
@@ -45,3 +44,5 @@ class OutputLayer:
         exp = np.exp(x-np.max(x))
         return exp / exp.sum(axis=0)
 
+    def loss(self, x, y):
+        pass

@@ -5,24 +5,6 @@ from src.Operations import Multiply
 from src.Operations import Add
 from src.Operations import Tanh
 
-
-def mean_squared_error(pred, y):
-    return np.mean((y-pred) ** 2)
-
-
-class RnnNetwork:
-    def __init__(self, input_dim, hidden_dim):
-        self.input_dim = input_dim
-        self.hidden_dim = hidden_dim
-
-        self.W = np.random.rand(self.hidden_dim, self.input_dim)
-        self.U = np.random.rand(self.hidden_dim, self.input_dim)
-        self.V = np.random.rand(self.hidden_dim, self.input_dim)
-
-    def forward_pass(self, x, h_prev, c_prev):
-        pass
-
-
 sigmoid = Sigmoid()
 add = Add()
 mul = Multiply()
@@ -56,6 +38,28 @@ class RNNLayer:
         dW, dh_prev = mul.backward_pass(W, h_prev, dWproduct)
         return dx, dh_prev, dU, dW, dV
 
+
+class RnnNetwork:
+    def __init__(self, input_dim, hidden_dim):
+        self.input_dim = input_dim
+        self.hidden_dim = hidden_dim
+
+        self.U = np.random.rand(self.hidden_dim, self.input_dim)
+        self.W = np.random.rand(self.hidden_dim, self.hidden_dim)
+        self.V = np.random.rand(self.input_dim, self.hidden_dim)
+
+    def forward_prop(self, x):
+        cells = []
+        h_prev = np.zeros(self.hidden_dim)
+        for elem in x:
+            cell = RNNLayer()
+            cell.forward_pass(elem, h_prev, self.U, self.W, self.V)
+            h_prev = cell.h
+            cells.append(cell)
+        return cells
+
+    def back_prop(self, x, y):
+        pass
 
 
 

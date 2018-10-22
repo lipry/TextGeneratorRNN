@@ -16,9 +16,9 @@ def test_init():
 
 
 def check_init_weights_matrix():
-    assert rnn.W.shape == (hidden_dim, input_dim)
     assert rnn.U.shape == (hidden_dim, input_dim)
-    assert rnn.V.shape == (hidden_dim, input_dim)
+    assert rnn.W.shape == (hidden_dim, hidden_dim)
+    assert rnn.V.shape == (input_dim, hidden_dim)
 
     assert (rnn.W >= 0).all() and (rnn.W <= 1).all()
     assert (rnn.U >= 0).all() and (rnn.U <= 1).all()
@@ -41,3 +41,9 @@ def test_rnn_layer_forward_pass():
     rnncell.forward_pass(x1, h_prev, U, W, V)
 
     assert np.allclose(rnncell.h, np.array([0.79210745, 0.24765939]))
+
+
+def test_rnnnetwork_forward_propagation():
+    x = np.array([[0, 1, 0], [0, 1, 0]])
+    cells = rnn.forward_prop(x)
+    assert len(cells) == 2
