@@ -1,5 +1,6 @@
 import numpy as np
 
+from datetime import datetime
 from src.FileReader import OneHotEncodingUtilities
 from src.Operations import Sigmoid, OutputLayer
 from src.Operations import Multiply
@@ -85,5 +86,46 @@ class RnnNetwork:
             dU += dUt
             dW += dWt
             dV += dVt
-        return dU, dW, dV
+        return np.array([dU, dW, dV])
 
+    def batch_loss(self, x, y):
+        out = OutputLayer()
+        layers = self.forward_prop(x)
+        loss = 0.0
+        for i, layer in enumerate(layers):
+            loss += out.loss(layer.Vproduct, y[i])
+
+        return loss/float(len(x))
+
+    def total_loss(self, X, Y):
+        loss = 0.0
+        for i in range(Y):
+            loss += self.batch_loss(X[i], Y[i])
+        return loss/float(len(X))
+
+    def print_loss(self, X, Y, epoch):
+        loss = self.total_loss(X, Y)
+        time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        print("{}: epoch = {} loss = {}".format(time, epoch, loss))
+
+    def train(self, X, Y, epochs=100, step_size=0.001, decay_rate1=0.9, decay_rate2=0.999, eps=1e-8):
+        assert len(X) == len(Y)
+        for epoch in range(epochs):
+            # check loss
+            if (epoch % 5) == 0:
+                self.print_loss(X, Y, epoch)
+            # init first and second moment vector
+            # V, W, U
+            m_t = np.zeros(3)
+            v_t = np.zeros(3)
+            t = 0
+            for i in range(len(Y)):
+                t += 1
+                g_t = self.backprop_through_time(X[i], Y[i])
+                m_t = decay_rate1*m_t + (1 - decay_rate1)*g_t
+                v_t = decay_rate1*v_t + (1 - decay_rate2)*g_t**2
+                m_correct = m_t/(1 - decay_rate1**t)
+                v_correct = v_t/(1 - decay_rate2**t)
+                self.V += -1 * (step_size * m_correct[0]) / (np.sqrt(v_correct[0])+eps)
+                self.W += -1 * (step_size * m_correct[1]) / (np.sqrt(v_correct[1])+eps)
+                self.U += -1 * (step_size * m_correct[2]) / (np.sqrt(v_correct[2])+eps)
