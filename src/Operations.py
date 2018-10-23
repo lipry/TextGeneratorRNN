@@ -1,3 +1,5 @@
+import warnings
+
 import numpy as np
 
 
@@ -17,7 +19,9 @@ class Multiply:
         return W.dot(x)
 
     def backward_pass(self, W, x, dz):
-        dW = np.asarray(np.dot(np.transpose(np.asarray(dz)), np.asarray(x)))
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            dW = np.asarray(np.dot(np.transpose(np.asmatrix(dz)), np.asmatrix(x)))
         dx = np.dot(np.transpose(W), dz)
         return dW, dx
 
@@ -45,4 +49,10 @@ class OutputLayer:
         return exp / exp.sum(axis=0)
 
     def loss(self, x, y):
-        pass
+        p = self.predict(x)
+        return -1*np.log(p[y])
+
+    def diff(self, x, y):
+        p = self.predict(x)
+        p[y] -= 1
+        return p

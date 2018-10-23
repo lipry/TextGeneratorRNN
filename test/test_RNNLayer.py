@@ -47,3 +47,16 @@ def test_rnnnetwork_forward_propagation():
     x = np.array([1, 2])
     cells = rnn.forward_prop(x)
     assert len(cells) == 2
+
+
+def test_rnnnetwork_backpropagation():
+    x = np.array([1, 2])
+    y = np.array([2, 1])
+    dU, dW, dV = rnn.backprop_through_time(x, y)
+    assert dU.shape == (hidden_dim, input_dim)
+    assert dW.shape == (hidden_dim, hidden_dim)
+    assert dV.shape == (input_dim, hidden_dim)
+
+    assert (dW >= -1).all() and (dW <= 1).all()
+    assert (dU >= -1).all() and (dU <= 1).all()
+    assert (dV >= -1).all() and (dV <= 1).all()

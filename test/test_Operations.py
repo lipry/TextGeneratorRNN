@@ -44,9 +44,8 @@ def test_multiply_backward_pass():
 
     A = np.array([[0.5, 0.8], [0.113, 0.15]])
     x = np.array([0.3, 0.2])
-    dA, dx = mul.backward_pass(A, x, [[2, 2], [2, 2]])
-    assert np.allclose(dx, [[1.226, 1.226], [1.9, 1.9]])
-    assert np.allclose(dA, [1., 1.])
+    dA, dx = mul.backward_pass(A, x, [2, 2])
+    assert np.allclose(dx, [1.226, 1.9])
 
 
 add = Add()

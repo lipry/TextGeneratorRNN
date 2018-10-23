@@ -1,7 +1,7 @@
 import numpy as np
 
 from src.FileReader import OneHotEncodingUtilities
-from src.Operations import Sigmoid
+from src.Operations import Sigmoid, OutputLayer
 from src.Operations import Multiply
 from src.Operations import Add
 from src.Operations import Tanh
@@ -60,10 +60,30 @@ class RnnNetwork:
             cells.append(cell)
         return cells
 
-    def back_prop(self, x, y):
-        pass
+    def backprop_through_time(self, x, y, truncated=4):
+        layers = self.forward_prop(x)
+        T = len(layers)
+        dU = np.zeros_like(self.U)
+        dW = np.zeros_like(self.W)
+        dV = np.zeros_like(self.V)
 
-
-
-
+        output = OutputLayer()
+        prev_ht = np.zeros(self.hidden_dim)
+        diff_h = np.zeros(self.hidden_dim)
+        for t in range(0, T):
+            diff_Vprod = output.diff(layers[t].Vproduct, y[t])
+            v = OneHotEncodingUtilities.one_hot_encoder(x[t], self.input_dim)
+            _, dh_prev, dUt, dWt, dVt = layers[t].backward_pass(v, prev_ht, self.U, self.W, self.V, diff_h, diff_Vprod)
+            prev_ht = layers[t].h
+            diff_Vprod = np.zeros(self.input_dim)
+            for i in range(t-1, max(t-1-truncated, -1), -1):
+                v = OneHotEncodingUtilities.one_hot_encoder(x[i], self.input_dim)
+                prev_hi = layers[i].h if i != 0 else np.zeros(self.hidden_dim)
+                _, dh_prev, dUi, dWi, dVi = layers[i].backward_pass(v, prev_hi, self.U, self.W, self.V, dh_prev, diff_Vprod)
+                dUt += dUi
+                dWt += dWi
+            dU += dUt
+            dW += dWt
+            dV += dVt
+        return dU, dW, dV
 
