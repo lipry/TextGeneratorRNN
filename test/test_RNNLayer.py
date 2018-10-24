@@ -20,9 +20,9 @@ def check_init_weights_matrix():
     assert rnn.W.shape == (hidden_dim, hidden_dim)
     assert rnn.V.shape == (input_dim, hidden_dim)
 
-    assert (rnn.W >= 0).all() and (rnn.W <= 1).all()
-    assert (rnn.U >= 0).all() and (rnn.U <= 1).all()
-    assert (rnn.V >= 0).all() and (rnn.V <= 1).all()
+    assert (rnn.U >= -0.5773502692).all() and (rnn.U <= 0.5773502692).all()
+    assert (rnn.W >= -0.2236067977).all() and (rnn.W <= 0.2236067977).all()
+    assert (rnn.V >= -0.2236067977).all() and (rnn.V <= 0.2236067977).all()
 
 
 def test_rnn_layer_forward_pass():

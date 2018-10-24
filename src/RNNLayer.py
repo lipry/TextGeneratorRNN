@@ -46,9 +46,9 @@ class RnnNetwork:
         self.input_dim = input_dim
         self.hidden_dim = hidden_dim
 
-        self.U = np.random.rand(self.hidden_dim, self.input_dim)
-        self.W = np.random.rand(self.hidden_dim, self.hidden_dim)
-        self.V = np.random.rand(self.input_dim, self.hidden_dim)
+        self.U = np.random.uniform(-np.sqrt(1. / input_dim), np.sqrt(1. / input_dim), (hidden_dim, input_dim))
+        self.W = np.random.uniform(-np.sqrt(1. / hidden_dim), np.sqrt(1. / hidden_dim), (hidden_dim, hidden_dim))
+        self.V = np.random.uniform(-np.sqrt(1. / hidden_dim), np.sqrt(1. / hidden_dim), (input_dim, hidden_dim))
 
     def forward_prop(self, x):
         cells = []
