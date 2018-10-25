@@ -7,7 +7,7 @@ nltk.download('punkt')
 
 
 class FileReader:
-    def __init__(self, inputfile, separator='\n', vocab_size = 8000):
+    def __init__(self, inputfile, separator='\n', vocab_size=8000):
         self.inputfile = inputfile
         self.separator = separator
         self.vocab_size = vocab_size
@@ -22,7 +22,7 @@ class FileReader:
                     yield paragraph
                     paragraph = []
                 else:
-                    paragraph.extend(word_tokenize(line))
+                    paragraph.extend(word_tokenize(line, language='italian'))
             if paragraph:
                 yield paragraph
 
@@ -36,6 +36,9 @@ class FileReader:
 
     def get_word_to_index(self):
         return self.word_to_index
+
+    def get_vocab_size(self):
+        return self.vocab_size
 
 
 class OneHotEncodingUtilities:

@@ -99,7 +99,7 @@ class RnnNetwork:
 
     def total_loss(self, X, Y):
         loss = 0.0
-        for i in range(Y):
+        for i in range(len(Y)):
             loss += self.batch_loss(X[i], Y[i])
         return loss/float(len(X))
 
@@ -111,21 +111,40 @@ class RnnNetwork:
     def train(self, X, Y, epochs=100, step_size=0.001, decay_rate1=0.9, decay_rate2=0.999, eps=1e-8):
         assert len(X) == len(Y)
         for epoch in range(epochs):
+            print("{}: Analyzing epoch = {}".format(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), epoch))
             # check loss
             if (epoch % 5) == 0:
                 self.print_loss(X, Y, epoch)
             # init first and second moment vector
-            # V, W, U
-            m_t = np.zeros(3)
-            v_t = np.zeros(3)
+            # dU, dW, dV
+            m_t_V = np.zeros_like(self.V)
+            m_t_W = np.zeros_like(self.W)
+            m_t_U = np.zeros_like(self.U)
+
+            v_t_V = np.zeros_like(self.V)
+            v_t_W = np.zeros_like(self.W)
+            v_t_U = np.zeros_like(self.U)
+
             t = 0
             for i in range(len(Y)):
                 t += 1
                 g_t = self.backprop_through_time(X[i], Y[i])
-                m_t = decay_rate1*m_t + (1 - decay_rate1)*g_t
-                v_t = decay_rate1*v_t + (1 - decay_rate2)*g_t**2
-                m_correct = m_t/(1 - decay_rate1**t)
-                v_correct = v_t/(1 - decay_rate2**t)
-                self.V += -1 * (step_size * m_correct[0]) / (np.sqrt(v_correct[0])+eps)
-                self.W += -1 * (step_size * m_correct[1]) / (np.sqrt(v_correct[1])+eps)
-                self.U += -1 * (step_size * m_correct[2]) / (np.sqrt(v_correct[2])+eps)
+
+                m_t_V = decay_rate1*m_t_V + (1 - decay_rate1)*g_t[2]
+                m_t_W = decay_rate1*m_t_W + (1 - decay_rate1)*g_t[1]
+                m_t_U = decay_rate1*m_t_U + (1 - decay_rate1)*g_t[0]
+
+                v_t_V = decay_rate1*v_t_V + (1 - decay_rate2)*g_t[2]**2
+                v_t_W = decay_rate1*v_t_W + (1 - decay_rate2)*g_t[1]**2
+                v_t_U = decay_rate1*v_t_U + (1 - decay_rate2)*g_t[0]**2
+
+                m_correct_V = m_t_V/(1 - decay_rate1**t)
+                m_correct_W = m_t_W/(1 - decay_rate1**t)
+                m_correct_U = m_t_U/(1 - decay_rate1**t)
+
+                v_correct_V = v_t_V/(1 - decay_rate2**t)
+                v_correct_W = v_t_W/(1 - decay_rate2**t)
+                v_correct_U = v_t_U/(1 - decay_rate2**t)
+                self.V += -1 * (step_size * m_correct_V) / (np.sqrt(v_correct_V)+eps)
+                self.W += -1 * (step_size * m_correct_W) / (np.sqrt(v_correct_W)+eps)
+                self.U += -1 * (step_size * m_correct_U) / (np.sqrt(v_correct_U)+eps)
