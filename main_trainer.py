@@ -4,7 +4,7 @@ from src.FileReader import FileReader
 from src.ModelSerializer import ModelSerializer
 from src.RNNLayer import RnnNetwork
 
-file = "../poesie/test"
+file = "../poesie/divina_commedia_canto1"
 serializer_file = "../models/model"
 new_model = False
 
@@ -31,7 +31,7 @@ else:
     rnn = serializer.deserialize()
 
 print("Training...")
-rnn.train(X_train, Y_train)
+rnn.train(X_train, Y_train, epochs=300)
 print("Training ended, total_loss = {}".format(rnn.total_loss(X_train, Y_train)))
 print("Serializing network...")
 serializer.serialize()

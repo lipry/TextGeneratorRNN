@@ -148,3 +148,8 @@ class RnnNetwork:
                 self.V += -1 * (step_size * m_correct_V) / (np.sqrt(v_correct_V)+eps)
                 self.W += -1 * (step_size * m_correct_W) / (np.sqrt(v_correct_W)+eps)
                 self.U += -1 * (step_size * m_correct_U) / (np.sqrt(v_correct_U)+eps)
+
+    def prediction(self, x):
+        out = OutputLayer()
+        layers = self.forward_prop(x)
+        return [np.argmax(out.predict(layer.Vproduct)) for layer in layers]

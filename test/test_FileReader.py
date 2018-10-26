@@ -9,16 +9,16 @@ def test_paragraph():
     for par in fr.paragraphs():
         p.append(par)
     assert len(p) == 2
-    assert p[0] == ['Meriggiare', 'pallido', 'e', 'assorto', 'presso', 'un', 'rovente', 'muro', "d'orto", ',',
+    assert p[0] == ['START_TOK', 'Meriggiare', 'pallido', 'e', 'assorto', 'presso', 'un', 'rovente', 'muro', "d'orto", ',',
                     'ascoltare', 'tra', 'i', 'pruni', 'e', 'gli', 'sterpi', 'schiocchi', 'di', 'merli', ',',
                     'frusci', 'di', 'serpi', '.', 'Nelle', 'crepe', 'del', 'suolo', 'o', 'su', 'la', 'veccia',
                     'spiar', 'le', 'file', 'di', 'rosse', 'formiche', "ch'ora", 'si', 'rompono', 'ed', 'ora',
                     "s'intrecciano", 'a', 'sommo', 'di', 'minuscole', 'biche', '.', 'Osservare', 'tra', 'frondi',
                     'il', 'palpitare', 'lontano', 'di', 'scaglie', 'di', 'mare', 'mentre', 'si', 'levano', 'tremuli',
-                    'scricchi', 'di', 'cicale', 'dai', 'calvi', 'picchi', '.']
-    assert p[1] == ['E', 'andando', 'nel', 'sole', 'che', 'abbaglia', 'sentire', 'con', 'triste', 'meraviglia',
+                    'scricchi', 'di', 'cicale', 'dai', 'calvi', 'picchi', '.', 'END_TOK']
+    assert p[1] == ['START_TOK', 'E', 'andando', 'nel', 'sole', 'che', 'abbaglia', 'sentire', 'con', 'triste', 'meraviglia',
                     "com'è", 'tutta', 'la', 'vita', 'e', 'il', 'suo', 'travaglio', 'in', 'questo', 'seguitare',
-                    'una', 'muraglia', 'che', 'ha', 'in', 'cima', 'cocci', 'aguzzi', 'di', 'bottiglia', '.']
+                    'una', 'muraglia', 'che', 'ha', 'in', 'cima', 'cocci', 'aguzzi', 'di', 'bottiglia', '.', 'END_TOK']
 
 
 def test_build_indices():
@@ -30,10 +30,10 @@ def test_build_indices():
     assert len(w_i) == 20
     assert i_w[1] == "."
     assert i_w[2] == "e"
-    assert i_w[12] == "assorto"
+    assert i_w[12] == "Meriggiare"
     assert w_i["."] == 1
     assert w_i["e"] == 2
-    assert w_i["assorto"] == 12
+    assert w_i["Meriggiare"] == 12
 
 
 def test_one_hot_encoding():
