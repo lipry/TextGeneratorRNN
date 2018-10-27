@@ -1,12 +1,19 @@
+import argparse
 import numpy as np
 
 from src.FileReader import FileReader
 from src.ModelSerializer import ModelSerializer
 from src.RNNLayer import RnnNetwork
 
-file = "../poesie/divina_commedia_canto1"
-serializer_file = "../models/model"
-new_model = False
+parser = argparse.ArgumentParser(description="Train a recursive neural network")
+parser.add_argument("input_file", help="The folder or document path of training data")
+parser.add_argument("model_file", help="The path where save the final model or load the model if -n is true")
+parser.add_argument("-n", "--new", default=1, help="If 1 the model is trained from scratch")
+args = parser.parse_args()
+
+file = args.input_file
+serializer_file = args.model_file
+new_model = bool(args.new)
 
 print("Reading file {}".format(file))
 reader = FileReader(file)

@@ -1,10 +1,20 @@
+import argparse
+
 from src.FileReader import FileReader
 from src.ModelSerializer import ModelSerializer
 
-start_token = 'START_TOK'
-end_token = 'END_TOK'
-serializer_file = "../models/model"
-file = "../poesie/divina_commedia_canto1"
+
+parser = argparse.ArgumentParser(description="Given a trained model generate some poems")
+parser.add_argument("model_file", help="Trained model to load")
+parser.add_argument("text_file", help="File used for training")
+parser.add_argument("-st", "--start_token", default="START_TOK")
+parser.add_argument("-et", "--end_token", default="END_TOK")
+args = parser.parse_args()
+
+start_token = args.start_token
+end_token = args.end_token
+serializer_file = args.model_file
+file = args.text_file
 
 print("Reading file {}".format(file))
 reader = FileReader(file)
@@ -30,5 +40,5 @@ print("Init serializer...")
 serializer = ModelSerializer(serializer_file)
 rnn = serializer.deserialize()
 
-stanza = generate_stanza(rnn)
-print([index_to_word[s] for s in stanza])
+generated = generate_stanza(rnn)
+print([index_to_word[s] for s in generated])
