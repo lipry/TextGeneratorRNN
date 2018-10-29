@@ -1,3 +1,5 @@
+import glob
+import os
 import itertools
 import numpy as np
 from nltk.tokenize import word_tokenize
@@ -8,7 +10,10 @@ nltk.download('punkt')
 
 class FileReader:
     def __init__(self, inputfile, separator='\n', vocab_size=8000, start_token="START_TOK", end_token="END_TOK"):
-        self.inputfile = inputfile
+        if os.path.isdir(inputfile):
+            self.inputfiles = glob.glob(inputfile+"*")
+        else:
+            self.inputfiles = [inputfile]
         self.separator = separator
         self.vocab_size = vocab_size
         self.index_to_word = []
@@ -17,18 +22,19 @@ class FileReader:
         self.end = end_token
 
     def paragraphs(self):
-        with open(self.inputfile, "r") as f:
-            paragraph = [self.start]
-            for line in f:
-                if line == self.separator:
+        for file in self.inputfiles:
+            with open(file, "r") as f:
+                paragraph = [self.start]
+                for line in f:
+                    if line == self.separator:
+                        paragraph.append(self.end)
+                        yield paragraph
+                        paragraph = [self.start]
+                    else:
+                        paragraph.extend(word_tokenize(line, language='italian'))
+                if paragraph:
                     paragraph.append(self.end)
                     yield paragraph
-                    paragraph = [self.start]
-                else:
-                    paragraph.extend(word_tokenize(line, language='italian'))
-            if paragraph:
-                paragraph.append(self.end)
-                yield paragraph
 
     def build_indices(self):
         freqwords = nltk.FreqDist(itertools.chain(*self.paragraphs()))

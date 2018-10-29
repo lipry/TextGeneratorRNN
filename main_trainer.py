@@ -1,5 +1,8 @@
 import argparse
+import traceback
+
 import numpy as np
+import sys
 
 from src.FileReader import FileReader
 from src.ModelSerializer import ModelSerializer
@@ -26,7 +29,6 @@ print("Building training set...")
 X_train = np.asarray([[word_to_index[word] for word in stanza[:-1]] for stanza in reader.paragraphs()])
 Y_train = np.asarray([[word_to_index[word] for word in stanza[1:]] for stanza in reader.paragraphs()])
 
-
 print("Init serializer...")
 serializer = ModelSerializer(serializer_file)
 
@@ -37,9 +39,16 @@ if new_model:
 else:
     rnn = serializer.deserialize()
 
-print("Training...")
-rnn.train(X_train, Y_train, epochs=300)
-print("Training ended, total_loss = {}".format(rnn.total_loss(X_train, Y_train)))
-print("Serializing network...")
-serializer.serialize()
+try:
+    print("Training...")
+    rnn.train(X_train, Y_train, epochs=300)
+    print("Training ended, total_loss = {}".format(rnn.total_loss(X_train, Y_train)))
+    print("Serializing network...")
+    serializer.serialize()
 
+except KeyboardInterrupt:
+    serializer.serialize()
+    print("Shutdown requested...exiting")
+except Exception:
+    traceback.print_exc(file=sys.stdout)
+    sys.exit(0)

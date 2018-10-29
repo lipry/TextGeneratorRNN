@@ -50,6 +50,8 @@ class RnnNetwork:
         self.W = np.random.uniform(-np.sqrt(1. / hidden_dim), np.sqrt(1. / hidden_dim), (hidden_dim, hidden_dim))
         self.V = np.random.uniform(-np.sqrt(1. / hidden_dim), np.sqrt(1. / hidden_dim), (input_dim, hidden_dim))
 
+        self.losses = []
+
     def forward_prop(self, x):
         cells = []
         h_prev = np.zeros(self.hidden_dim)
@@ -105,6 +107,7 @@ class RnnNetwork:
 
     def print_loss(self, X, Y, epoch):
         loss = self.total_loss(X, Y)
+        self.losses.append(loss)
         time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         print("{}: epoch = {} loss = {}".format(time, epoch, loss))
 
