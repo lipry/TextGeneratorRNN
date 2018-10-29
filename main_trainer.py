@@ -12,6 +12,8 @@ parser = argparse.ArgumentParser(description="Train a recursive neural network")
 parser.add_argument("input_file", help="The folder or document path of training data")
 parser.add_argument("model_file", help="The path where save the final model or load the model if -n is true")
 parser.add_argument("-n", "--new", default=1, help="If 1 the model is trained from scratch")
+parser.add_argument("--neurons", default=100, help="Number of hidden neurons for every RNN layers")
+parser.add_argument("--epochs", default=500, help="Number of training epochs over the dataset")
 args = parser.parse_args()
 
 file = args.input_file
@@ -34,14 +36,14 @@ serializer = ModelSerializer(serializer_file)
 
 print("Init Network...")
 if new_model:
-    rnn = RnnNetwork(reader.vocab_size, 10)
+    rnn = RnnNetwork(reader.vocab_size, int(args.neurons))
     serializer.set_model(rnn)
 else:
     rnn = serializer.deserialize()
 
 try:
     print("Training...")
-    rnn.train(X_train, Y_train, epochs=300)
+    rnn.train(X_train, Y_train, epochs=int(args.epochs))
     print("Training ended, total_loss = {}".format(rnn.total_loss(X_train, Y_train)))
     print("Serializing network...")
     serializer.serialize()

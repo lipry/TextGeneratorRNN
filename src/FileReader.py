@@ -37,7 +37,8 @@ class FileReader:
                     yield paragraph
 
     def build_indices(self):
-        freqwords = nltk.FreqDist(itertools.chain(*self.paragraphs()))
+        paragraphs = itertools.chain(*self.paragraphs())
+        freqwords = nltk.FreqDist(paragraphs)
         self.index_to_word = [t[0] for t in freqwords.most_common(self.vocab_size)]
         self.word_to_index = dict([(w, i) for i, w in enumerate(self.index_to_word)])
 
