@@ -28,12 +28,14 @@ class FileReader:
                 for line in f:
                     if line == self.separator:
                         paragraph.append(self.end)
+                        print(paragraph)
                         yield paragraph
                         paragraph = [self.start]
                     else:
                         paragraph.extend(word_tokenize(line, language='italian'))
                 if paragraph:
                     paragraph.append(self.end)
+                    print(paragraph)
                     yield paragraph
 
     def build_indices(self):

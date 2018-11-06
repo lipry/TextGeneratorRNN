@@ -63,7 +63,7 @@ class RnnNetwork:
             cells.append(cell)
         return cells
 
-    def backprop_through_time(self, x, y, truncated=4):
+    def backprop_through_time(self, x, y, truncated=7):
         layers = self.forward_prop(x)
         T = len(layers)
         dU = np.zeros_like(self.U)
