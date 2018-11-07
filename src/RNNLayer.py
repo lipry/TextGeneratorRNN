@@ -1,3 +1,4 @@
+import logging
 import numpy as np
 
 from datetime import datetime
@@ -109,12 +110,12 @@ class RnnNetwork:
         loss = self.total_loss(X, Y)
         self.losses.append(loss)
         time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        print("{}: epoch = {} loss = {}".format(time, epoch, loss))
+        logging.debug("{}: epoch = {} loss = {}".format(time, epoch, loss))
 
     def train(self, X, Y, epochs=100, step_size=0.001, decay_rate1=0.9, decay_rate2=0.999, eps=1e-8):
         assert len(X) == len(Y)
         for epoch in range(epochs):
-            print("{}: Analyzing epoch = {}".format(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), epoch))
+            logging.debug("{}: Analyzing epoch = {}".format(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), epoch))
             # check loss
             if (epoch % 5) == 0:
                 self.print_loss(X, Y, epoch)
