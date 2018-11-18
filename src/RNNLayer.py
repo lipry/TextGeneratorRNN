@@ -138,20 +138,20 @@ class RnnNetwork:
                 m_t_W = decay_rate1*m_t_W + (1 - decay_rate1)*g_t[1]
                 m_t_U = decay_rate1*m_t_U + (1 - decay_rate1)*g_t[0]
 
-                v_t_V = decay_rate1*v_t_V + (1 - decay_rate2)*g_t[2]**2
-                v_t_W = decay_rate1*v_t_W + (1 - decay_rate2)*g_t[1]**2
-                v_t_U = decay_rate1*v_t_U + (1 - decay_rate2)*g_t[0]**2
+                v_t_V = decay_rate2*v_t_V + (1 - decay_rate2)*(g_t[2]**2)
+                v_t_W = decay_rate2*v_t_W + (1 - decay_rate2)*(g_t[1]**2)
+                v_t_U = decay_rate2*v_t_U + (1 - decay_rate2)*(g_t[0]**2)
 
-                m_correct_V = m_t_V/(1 - decay_rate1**t)
-                m_correct_W = m_t_W/(1 - decay_rate1**t)
-                m_correct_U = m_t_U/(1 - decay_rate1**t)
+                m_correct_V = m_t_V/(1 - (decay_rate1**t))
+                m_correct_W = m_t_W/(1 - (decay_rate1**t))
+                m_correct_U = m_t_U/(1 - (decay_rate1**t))
 
                 v_correct_V = v_t_V/(1 - decay_rate2**t)
                 v_correct_W = v_t_W/(1 - decay_rate2**t)
                 v_correct_U = v_t_U/(1 - decay_rate2**t)
-                self.V += -1 * (step_size * m_correct_V) / (np.sqrt(v_correct_V)+eps)
-                self.W += -1 * (step_size * m_correct_W) / (np.sqrt(v_correct_W)+eps)
-                self.U += -1 * (step_size * m_correct_U) / (np.sqrt(v_correct_U)+eps)
+                self.V -= (step_size * m_correct_V) / (np.sqrt(v_correct_V)+eps)
+                self.W -= (step_size * m_correct_W) / (np.sqrt(v_correct_W)+eps)
+                self.U -= (step_size * m_correct_U) / (np.sqrt(v_correct_U)+eps)
 
     def prediction(self, x):
         out = OutputLayer()

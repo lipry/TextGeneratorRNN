@@ -20,7 +20,7 @@ args = parser.parse_args()
 
 file = args.input_file
 serializer_file = args.model_file
-new_model = bool(args.new)
+new_model = bool(int(args.new))
 
 logging.basicConfig(filename=args.logging, level=logging.DEBUG)
 
@@ -32,15 +32,18 @@ reader.build_indices()
 word_to_index = reader.get_word_to_index()
 
 logging.debug("Building training set...")
-X_train = np.asarray([[word_to_index[word] for word in stanza[:-1]] for stanza in reader.paragraphs()])
-Y_train = np.asarray([[word_to_index[word] for word in stanza[1:]] for stanza in reader.paragraphs()])
+paragraph = [[w if w in word_to_index else reader.unknown for w in p] for p in reader.paragraphs()]
+X_train = np.asarray([[word_to_index[word] for word in stanza[:-1]] for stanza in paragraph])
+Y_train = np.asarray([[word_to_index[word] for word in stanza[1:]] for stanza in paragraph])
 
 logging.debug("Init serializer...")
 serializer = ModelSerializer(serializer_file)
 
 logging.debug("Init Network...")
+print(new_model)
 if new_model:
-    rnn = RnnNetwork(reader.vocab_size, int(args.neurons))
+    print(len(word_to_index))
+    rnn = RnnNetwork(len(word_to_index)+1, int(args.neurons))
     serializer.set_model(rnn)
 else:
     rnn = serializer.deserialize()

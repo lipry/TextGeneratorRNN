@@ -9,7 +9,7 @@ nltk.download('punkt')
 
 
 class FileReader:
-    def __init__(self, inputfile, separator='\n', vocab_size=8000, start_token="START_TOK", end_token="END_TOK"):
+    def __init__(self, inputfile, separator='\n', vocab_size=8000, start_token="START_TOK", end_token="END_TOK", unknown_token="UNKNOWN_TOKEN"):
         if os.path.isdir(inputfile):
             self.inputfiles = glob.glob(inputfile+"*")
         else:
@@ -20,6 +20,7 @@ class FileReader:
         self.word_to_index = {}
         self.start = start_token
         self.end = end_token
+        self.unknown = unknown_token
 
     def paragraphs(self):
         for file in self.inputfiles:
@@ -40,6 +41,7 @@ class FileReader:
         paragraphs = itertools.chain(*self.paragraphs())
         freqwords = nltk.FreqDist(paragraphs)
         self.index_to_word = [t[0] for t in freqwords.most_common(self.vocab_size)]
+        self.index_to_word.append(self.unknown)
         self.word_to_index = dict([(w, i) for i, w in enumerate(self.index_to_word)])
 
     def get_index_to_word(self):
