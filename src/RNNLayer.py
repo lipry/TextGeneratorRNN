@@ -101,11 +101,15 @@ class RnnNetwork:
 
         return loss/float(len(x))
 
+    # def total_loss(self, X, Y):
+    #     loss = 0.0
+    #     for i in range(len(Y)):
+    #         loss += self.batch_loss(X[i], Y[i])
+    #     return loss/float(len(X))
+
     def total_loss(self, X, Y):
-        loss = 0.0
-        for i in range(len(Y)):
-            loss += self.batch_loss(X[i], Y[i])
-        return loss/float(len(X))
+        vect = np.vectorize(self.batch_loss, otypes=[np.float])
+        return vect(X, Y).sum()/float(len(X))
 
     def print_loss(self, X, Y, epoch, test=False):
         loss = self.total_loss(X, Y)
