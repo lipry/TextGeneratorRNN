@@ -52,6 +52,7 @@ class RnnNetwork:
         self.V = np.random.uniform(-np.sqrt(1. / hidden_dim), np.sqrt(1. / hidden_dim), (input_dim, hidden_dim))
 
         self.losses = []
+        self.test_losses = []
 
     def forward_prop(self, x):
         cells = []
@@ -106,19 +107,26 @@ class RnnNetwork:
             loss += self.batch_loss(X[i], Y[i])
         return loss/float(len(X))
 
-    def print_loss(self, X, Y, epoch):
+    def print_loss(self, X, Y, epoch, test=False):
         loss = self.total_loss(X, Y)
-        self.losses.append(loss)
+        if test:
+            self.test_losses.append(loss)
+        else:
+            self.losses.append(loss)
         time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        logging.debug("{}: epoch = {} loss = {}".format(time, epoch, loss))
+        s = "{}: epoch = {} loss = {}"
+        if test:
+            s = "TEST LOSS: " + s
+        logging.debug(s.format(time, epoch, loss))
 
-    def train(self, X, Y, epochs=100, step_size=0.001, decay_rate1=0.9, decay_rate2=0.999, eps=1e-8):
-        assert len(X) == len(Y)
+    def train(self, X_train, Y_train, X_test, Y_test, epochs=100, step_size=0.001, decay_rate1=0.9, decay_rate2=0.999, eps=1e-8):
+        assert len(X_train) == len(Y_train)
         for epoch in range(epochs):
             logging.debug("{}: Analyzing epoch = {}".format(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), epoch))
             # check loss
             if (epoch % 5) == 0:
-                self.print_loss(X, Y, epoch)
+                self.print_loss(X_train, Y_train, epoch)
+                self.print_loss(X_test, Y_test, epoch, test=True)
             # init first and second moment vector
             # dU, dW, dV
             m_t_V = np.zeros_like(self.V)
@@ -130,9 +138,9 @@ class RnnNetwork:
             v_t_U = np.zeros_like(self.U)
 
             t = 0
-            for i in range(len(Y)):
+            for i in range(len(Y_train)):
                 t += 1
-                g_t = self.backprop_through_time(X[i], Y[i])
+                g_t = self.backprop_through_time(X_train[i], Y_train[i])
 
                 m_t_V = decay_rate1*m_t_V + (1 - decay_rate1)*g_t[2]
                 m_t_W = decay_rate1*m_t_W + (1 - decay_rate1)*g_t[1]

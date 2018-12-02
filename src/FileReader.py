@@ -9,7 +9,13 @@ nltk.download('punkt')
 
 
 class FileReader:
-    def __init__(self, inputfile, separator='\n', vocab_size=8000, start_token="START_TOK", end_token="END_TOK", unknown_token="UNKNOWN_TOKEN"):
+    def __init__(self, inputfile,
+                 separator='\n',
+                 vocab_size=8000,
+                 start_token="START_TOK",
+                 end_token="END_TOK",
+                 unknown_token="UNKNOWN_TOKEN",
+                 char=False):
         if os.path.isdir(inputfile):
             self.inputfiles = glob.glob(inputfile+"*")
         else:
@@ -21,6 +27,7 @@ class FileReader:
         self.start = start_token
         self.end = end_token
         self.unknown = unknown_token
+        self.char = char
 
     def paragraphs(self):
         for file in self.inputfiles:
@@ -32,7 +39,7 @@ class FileReader:
                         yield paragraph
                         paragraph = [self.start]
                     else:
-                        paragraph.extend(word_tokenize(line, language='italian'))
+                        paragraph.extend(line if self.char else word_tokenize(line, language='italian'))
                 if paragraph:
                     paragraph.append(self.end)
                     yield paragraph

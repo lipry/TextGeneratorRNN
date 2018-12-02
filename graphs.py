@@ -5,18 +5,21 @@ from src.ModelSerializer import ModelSerializer
 
 parser = argparse.ArgumentParser(description="Given a trained model generate some poems")
 parser.add_argument("model_file", help="Trained model to load")
+parser.add_argument("epochs", help="Number of epochs", type=int)
 args = parser.parse_args()
 
 serializer = ModelSerializer(args.model_file)
 
 rnn = serializer.deserialize()
 
-y = rnn.losses
-x = range(0, 3  00, 5)
-print(x)
-print(y)
+y_train = rnn.losses
+y_test = rnn.test_losses
+x = range(0, args.epochs, 5)
 
-plt.plot(x, y)
+
+plt.plot(x, y_train, color='b')
+plt.plot(x, y_test, color='r')
+
 plt.xlabel('Epochs')
 plt.ylabel('Loss')
 plt.ylim((0, 10))

@@ -3,7 +3,6 @@ import traceback
 import logging
 
 import numpy as np
-import sys
 from sklearn.model_selection import train_test_split
 
 from src.FileReader import FileReader
@@ -33,7 +32,7 @@ reader.build_indices()
 word_to_index = reader.get_word_to_index()
 
 logging.debug("Building training set...")
-paragraph = [[w if w in word_to_index else reader.unknown for w in p] for p in reader.paragraphs()]
+paragraph = [[w if w in word_to_index else reader.unknown for w in p] for p in reader.paragraphs(char=True)]
 X = np.asarray([[word_to_index[word] for word in p[:-1]] for p in paragraph])
 Y = np.asarray([[word_to_index[word] for word in p[1:]] for p in paragraph])
 
@@ -53,9 +52,9 @@ else:
 
 try:
     logging.debug("Training...")
-    rnn.train(X_train, Y_train, X_test, Y_test, epochs=int(args.epochs))
+    rnn.train(X_train, Y_train, epochs=int(args.epochs))
     logging.debug("Training ended, total_loss = {}".format(rnn.total_loss(X_train, Y_train)))
-    logging.debug("Calculating final test loss...")
+    logging.debug("Calculating loss over test")
     logging.debug("TEST ERROR: {}".format(rnn.total_loss(X_test, Y_test)))
     logging.debug("Serializing network...")
     serializer.serialize()
