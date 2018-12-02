@@ -98,14 +98,7 @@ class RnnNetwork:
         loss = 0.0
         for i, layer in enumerate(layers):
             loss += out.loss(layer.Vproduct, y[i])
-
         return loss/float(len(x))
-
-    # def total_loss(self, X, Y):
-    #     loss = 0.0
-    #     for i in range(len(Y)):
-    #         loss += self.batch_loss(X[i], Y[i])
-    #     return loss/float(len(X))
 
     def total_loss(self, X, Y):
         vect = np.vectorize(self.batch_loss, otypes=[np.float])

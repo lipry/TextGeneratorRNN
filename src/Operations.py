@@ -50,7 +50,7 @@ class OutputLayer:
 
     def loss(self, x, y):
         p = self.predict(x)
-        return -1*np.log(p[y])
+        return -np.log(p[y])
 
     def diff(self, x, y):
         p = self.predict(x)
