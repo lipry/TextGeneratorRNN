@@ -37,7 +37,7 @@ paragraph = [[w if w in word_to_index else reader.unknown for w in p] for p in r
 X = np.asarray([[word_to_index[word] for word in p[:-1]] for p in paragraph])
 Y = np.asarray([[word_to_index[word] for word in p[1:]] for p in paragraph])
 
-X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3)
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
 
 logging.debug("Init serializer...")
 serializer = ModelSerializer(serializer_file)

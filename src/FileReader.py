@@ -44,6 +44,19 @@ class FileReader:
                     paragraph.append(self.end)
                     yield paragraph
 
+    def string_paragraphs(self):
+        for file in self.inputfiles:
+            with open(file, "r") as f:
+                paragraph = ""
+                for line in f:
+                    if line == self.separator:
+                        yield paragraph
+                        paragraph = ""
+                    else:
+                        paragraph += line
+                if paragraph:
+                    yield paragraph
+
     def build_indices(self):
         paragraphs = itertools.chain(*self.paragraphs())
         freqwords = nltk.FreqDist(paragraphs)

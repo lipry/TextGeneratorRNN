@@ -21,7 +21,7 @@ class Multiply:
     def backward_pass(self, W, x, dz):
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            dW = np.asarray(np.dot(np.transpose(np.asmatrix(dz)), np.asmatrix(x)))
+            dW = np.outer(dz, x)
         dx = np.dot(np.transpose(W), dz)
         return dW, dx
 
@@ -31,6 +31,7 @@ class Add:
         return x + y
 
     def backward_pass(self, x, y, dz):
+        #boh, potevo tornare direttamente dz?
         return np.ones_like(x)*dz, np.ones_like(y)*dz
 
 
@@ -40,7 +41,7 @@ class Tanh:
 
     def backward_pass(self, x, top_diff):
         fw = self.forward_pass(x)
-        return (1.0 - np.square(fw)) * top_diff
+        return (1.0 - fw*fw) * top_diff
 
 
 class OutputLayer:

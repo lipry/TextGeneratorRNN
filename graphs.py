@@ -17,10 +17,12 @@ y_test = rnn.test_losses
 x = range(0, args.epochs, 5)
 
 
-plt.plot(x, y_train, color='b')
-plt.plot(x, y_test, color='r')
+plt.plot(x, y_train, color='b', label="Train loss")
+plt.plot(x, y_test, color='r', label="Test loss")
 
 plt.xlabel('Epochs')
 plt.ylabel('Loss')
-plt.ylim((0, 10))
+plt.ylim((0, max(max(y_train), max(y_test))))
+plt.xlim(0, args.epochs)
+plt.legend()
 plt.show()

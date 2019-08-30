@@ -1,5 +1,6 @@
 import logging
 import numpy as np
+import time
 
 from datetime import datetime
 from src.FileReader import OneHotEncodingUtilities
@@ -23,7 +24,6 @@ class RNNLayer:
         self.Vproduct = None
 
     def forward_pass(self, x, h_prev, U, W, V):
-        # calculating the state function h
         self.Uproduct = mul.forward_pass(U, x)
         self.Wproduct = mul.forward_pass(W, h_prev)
         self.UWsum = add.forward_pass(self.Uproduct, self.Wproduct)
@@ -55,6 +55,7 @@ class RnnNetwork:
         self.test_losses = []
 
     def forward_prop(self, x):
+        pass
         cells = []
         h_prev = np.zeros(self.hidden_dim)
         for elem in x:

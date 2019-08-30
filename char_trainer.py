@@ -3,6 +3,7 @@ import traceback
 import logging
 
 import numpy as np
+import sys
 from sklearn.model_selection import train_test_split
 
 from src.FileReader import FileReader
@@ -27,32 +28,26 @@ logging.basicConfig(filename=args.logging, level=logging.DEBUG)
 logging.debug("Reading file {}".format(file))
 reader = FileReader(file)
 
-logging.debug("Building indices...")
-reader.build_indices()
-word_to_index = reader.get_word_to_index()
-
 logging.debug("Building training set...")
-paragraph = [[w if w in word_to_index else reader.unknown for w in p] for p in reader.paragraphs(char=True)]
-X = np.asarray([[word_to_index[word] for word in p[:-1]] for p in paragraph])
-Y = np.asarray([[word_to_index[word] for word in p[1:]] for p in paragraph])
-
+paragraph = [[c for c in p] for p in reader.string_paragraphs()]
+X = np.asarray([[ord(x) for x in p[:-1] if ord(x) < 128] for p in paragraph])
+Y = np.asarray([[ord(x)for x in p[1:] if ord(x) < 128] for p in paragraph])
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3)
 
 logging.debug("Init serializer...")
 serializer = ModelSerializer(serializer_file)
 
 logging.debug("Init Network...")
-print(new_model)
 if new_model:
-    print(len(word_to_index))
-    rnn = RnnNetwork(len(word_to_index)+1, int(args.neurons))
+    print("entro")
+    rnn = RnnNetwork(128, int(args.neurons))
     serializer.set_model(rnn)
 else:
     rnn = serializer.deserialize()
 
 try:
     logging.debug("Training...")
-    rnn.train(X_train, Y_train, epochs=int(args.epochs))
+    rnn.train(X_train, Y_train, X_test, Y_test, epochs=int(args.epochs))
     logging.debug("Training ended, total_loss = {}".format(rnn.total_loss(X_train, Y_train)))
     logging.debug("Calculating loss over test")
     logging.debug("TEST ERROR: {}".format(rnn.total_loss(X_test, Y_test)))
